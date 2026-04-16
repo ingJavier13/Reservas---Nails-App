@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import AdminPanel from './components/AdminPanel';
+import ServicesPanel from './components/ServicesPanel';
 import Auth from './components/Auth'; // Importación correcta
 
 function App() {
@@ -99,6 +100,14 @@ function App() {
             >
               Mis Citas
             </button>
+            {user?.role === 'ADMIN' && (
+              <button 
+                onClick={() => setView('mis-servicios')} 
+                className={`${view === 'mis-servicios' ? 'text-rose-600 font-bold' : 'hover:text-rose-500'} transition`}
+              >
+                Mis Servicios
+              </button>
+            )}
             
             {/* Botón de Login/Logout Inteligente */}
             {user ? (
@@ -196,9 +205,11 @@ function App() {
             </div>
           </main>
         </>
-      ) : (
-        <AdminPanel user={user} token={token} /> // Le pasamos los datos del usuario al panel
-      )}
+      ) : view === 'admin' ? (
+        <AdminPanel user={user} token={token} />
+      ) : view === 'mis-servicios' ? (
+        <ServicesPanel token={token} />
+      ) : null}
 
       {/* --- 3. Modal de Reserva --- */}
       {isModalOpen && (

@@ -56,6 +56,45 @@ app.post('/services', verifyToken, async (req, res) => {
   }
 });
 
+// PUT: Actualizar un servicio existente
+app.put('/services/:id', verifyToken, async (req, res) => {
+  try {
+    if (req.user.role === 'CLIENTE') return res.status(403).json({ error: "No tienes permisos" });
+    
+    const { id } = req.params;
+    const { name, description, price, duration, imageUrl } = req.body;
+    
+    const updatedService = await prisma.service.update({
+      where: { id: parseInt(id) },
+      data: {
+        name,
+        description,
+        price: parseFloat(price),
+        duration: parseInt(duration),
+        ...(imageUrl && { imageUrl }) // Sólo actualiza la imagen si envían una nueva
+      }
+    });
+    res.json(updatedService);
+  } catch (error) {
+    console.error("Error al actualizar servicio:", error);
+    res.status(500).json({ error: "Error al actualizar el servicio en la base de datos" });
+  }
+});
+
+// DELETE: Eliminar un servicio
+app.delete('/services/:id', verifyToken, async (req, res) => {
+  try {
+    if (req.user.role === 'CLIENTE') return res.status(403).json({ error: "No tienes permisos" });
+    
+    const { id } = req.params;
+    await prisma.service.delete({ where: { id: parseInt(id) } });
+    res.json({ message: "Servicio eliminado correctamente" });
+  } catch (error) {
+    console.error("Error al eliminar servicio:", error);
+    res.status(500).json({ error: "Error al eliminar el servicio de la base de datos" });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
 });
