@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { MdAdd, MdClose, MdEdit, MdDelete, MdAccessTime, MdCloudUpload } from 'react-icons/md';
 
 export default function ServicesPanel({ token }) {
   const [servicios, setServicios] = useState([]);
@@ -114,9 +115,9 @@ export default function ServicesPanel({ token }) {
         {!isAddingService && (
           <button 
             onClick={() => setIsAddingService(true)}
-            className="bg-rose-500 text-white font-bold px-6 py-2 rounded-xl hover:bg-rose-600 transition shadow-sm"
+            className="bg-rose-500 text-white font-bold px-6 py-2 rounded-xl hover:bg-rose-600 transition shadow-sm flex items-center gap-1"
           >
-            ➕ Nuevo Servicio
+            <MdAdd size={20} /> Nuevo Servicio
           </button>
         )}
       </div>
@@ -130,9 +131,9 @@ export default function ServicesPanel({ token }) {
               </h3>
               <button 
                 onClick={cancelarEdicion} 
-                className="text-slate-500 hover:text-rose-600 font-bold text-sm bg-slate-100 hover:bg-rose-50 px-4 py-2 rounded-full transition"
+                className="text-slate-500 hover:text-rose-600 font-bold text-sm bg-slate-100 hover:bg-rose-50 px-4 py-2 rounded-full transition flex items-center gap-1"
               >
-                ✕ Cerrar
+                <MdClose size={16} /> Cerrar
               </button>
             </div>
           
@@ -172,8 +173,8 @@ export default function ServicesPanel({ token }) {
             </div>
 
             <button type="submit" disabled={isUploading}
-              className={`w-full py-4 font-bold text-white rounded-xl transition shadow-lg mt-6 ${isUploading ? 'bg-slate-400 cursor-wait' : 'bg-slate-900 hover:bg-rose-600 shadow-rose-200'}`}>
-              {isUploading ? '⏳ Guardando en la nube...' : (editingServiceId ? 'Guardar Cambios' : 'Crear y Publicar Servicio')}
+              className={`w-full py-4 font-bold text-white rounded-xl transition shadow-lg mt-6 flex items-center justify-center gap-2 ${isUploading ? 'bg-slate-400 cursor-wait' : 'bg-slate-900 hover:bg-rose-600 shadow-rose-200'}`}>
+              {isUploading ? <><MdCloudUpload size={22} className="animate-pulse" /> Guardando en la nube...</> : (editingServiceId ? 'Guardar Cambios' : 'Crear y Publicar Servicio')}
             </button>
           </form>
         </div>
@@ -187,11 +188,11 @@ export default function ServicesPanel({ token }) {
             <div className="h-40 relative">
               <img src={s.imageUrl || 'https://via.placeholder.com/400'} alt={s.name} className="w-full h-full object-cover" />
               <div className="absolute top-2 right-2 flex gap-2">
-                <button onClick={() => iniciarEdicion(s)} className="bg-amber-100 text-amber-700 hover:bg-amber-200 font-bold px-3 py-1 text-xs rounded-full shadow-sm backdrop-blur transition">
-                  ✏️ Editar
+                <button onClick={() => iniciarEdicion(s)} className="bg-amber-100 text-amber-700 hover:bg-amber-200 font-bold px-3 py-1 text-xs rounded-full shadow-sm backdrop-blur transition flex items-center gap-1">
+                  <MdEdit size={14} /> Editar
                 </button>
-                <button onClick={() => eliminarServicio(s.id)} className="bg-rose-100/90 text-rose-700 hover:bg-rose-500 hover:text-white font-bold px-3 py-1 text-xs rounded-full shadow-sm backdrop-blur transition">
-                  🗑️ Borrar
+                <button onClick={() => eliminarServicio(s.id)} className="bg-rose-100/90 text-rose-700 hover:bg-rose-500 hover:text-white font-bold px-3 py-1 text-xs rounded-full shadow-sm backdrop-blur transition flex items-center gap-1">
+                  <MdDelete size={14} /> Borrar
                 </button>
               </div>
             </div>
@@ -202,7 +203,7 @@ export default function ServicesPanel({ token }) {
               </div>
               <div className="flex justify-between items-center bg-slate-50 p-3 rounded-lg border border-slate-100">
                 <span className="font-black text-slate-900">${s.price}</span>
-                <span className="text-xs font-bold text-slate-500">⏱ {s.duration} min</span>
+                <span className="text-xs font-bold text-slate-500 flex items-center gap-1"><MdAccessTime size={14} /> {s.duration} min</span>
               </div>
             </div>
           </div>

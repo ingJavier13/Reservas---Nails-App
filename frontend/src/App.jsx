@@ -3,6 +3,7 @@ import axios from 'axios';
 import AdminPanel from './components/AdminPanel';
 import ServicesPanel from './components/ServicesPanel';
 import Auth from './components/Auth'; // Importación correcta
+import { MdAccessTime } from 'react-icons/md';
 
 function App() {
   // --- Estados de la Navegación y Datos ---
@@ -167,8 +168,8 @@ function App() {
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
                       
                       {/* Etiqueta de tiempo flotante */}
-                      <span className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-rose-600 shadow-sm z-10">
-                        ⏱ {s.duration} min
+                      <span className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-rose-600 shadow-sm z-10 flex items-center gap-1">
+                        <MdAccessTime size={14} /> {s.duration} min
                       </span>
                     </div>
                   
