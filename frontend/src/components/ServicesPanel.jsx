@@ -109,71 +109,71 @@ export default function ServicesPanel({ token }) {
     <section className="max-w-6xl mx-auto px-4 py-12 animate-fade-in">
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3">
-          <div className="h-8 w-2 bg-rose-500 rounded-full"></div>
-          <h2 className="text-3xl font-black text-slate-800">Mi Catálogo de Servicios</h2>
+          <div className="h-8 w-2 bg-stone-800 rounded-full"></div>
+          <h2 className="text-3xl font-black text-stone-900">Mi Catálogo de Servicios</h2>
         </div>
         {!isAddingService && (
           <button 
             onClick={() => setIsAddingService(true)}
-            className="bg-rose-500 text-white font-bold px-6 py-2 rounded-xl hover:bg-rose-600 transition shadow-sm flex items-center gap-1"
+            className="bg-stone-900 text-white font-bold px-6 py-2.5 rounded-full hover:bg-rose-300 hover:text-stone-900 uppercase text-xs tracking-widest transition-all duration-300 shadow-sm flex items-center gap-1"
           >
-            <MdAdd size={20} /> Nuevo Servicio
+            <MdAdd size={18} /> Nuevo Servicio
           </button>
         )}
       </div>
 
       {isAddingService && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm animate-fade-in">
           <div className="bg-white p-8 rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto scrollbar-hide">
-            <div className="flex justify-between items-center mb-6 sticky top-0 bg-white/90 backdrop-blur-md z-10 pb-4 border-b border-slate-100">
-              <h3 className="text-2xl font-black text-slate-800">
-                {editingServiceId ? 'Editando Servicio' : 'Agregar Nuevo Diseño/Servicio'}
+            <div className="flex justify-between items-center mb-6 sticky top-0 bg-white/90 backdrop-blur-md z-10 pb-4 border-b border-stone-100">
+              <h3 className="text-2xl font-black text-stone-900">
+                {editingServiceId ? 'Editando Servicio' : 'Agregar Nuevo Servicio'}
               </h3>
               <button 
                 onClick={cancelarEdicion} 
-                className="text-slate-500 hover:text-rose-600 font-bold text-sm bg-slate-100 hover:bg-rose-50 px-4 py-2 rounded-full transition flex items-center gap-1"
+                className="text-stone-500 hover:text-stone-900 font-bold text-[10px] uppercase tracking-widest bg-stone-100 hover:bg-stone-200 px-4 py-2 rounded-full transition flex items-center gap-1"
               >
-                <MdClose size={16} /> Cerrar
+                <MdClose size={14} /> Cerrar
               </button>
             </div>
           
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="grid grid-cols-2 gap-5">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">Nombre</label>
-                <input type="text" required className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 outline-none transition"
+                <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest mb-1">Nombre</label>
+                <input type="text" required className="w-full p-2 bg-transparent border-b border-stone-200 focus:border-stone-900 outline-none transition rounded-none font-medium text-stone-900"
                   value={serviceForm.name} onChange={e => setServiceForm({...serviceForm, name: e.target.value})} />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">Precio ($ MXN)</label>
-                <input type="number" required className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 outline-none transition"
+                <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest mb-1">Precio ($ MXN)</label>
+                <input type="number" required className="w-full p-2 bg-transparent border-b border-stone-200 focus:border-stone-900 outline-none transition rounded-none font-medium text-stone-900"
                   value={serviceForm.price} onChange={e => setServiceForm({...serviceForm, price: e.target.value})} />
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-5">
+            <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">Duración (Minutos)</label>
-                <input type="number" required className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 outline-none transition"
+                <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest mb-1">Duración (Minutos)</label>
+                <input type="number" required className="w-full p-2 bg-transparent border-b border-stone-200 focus:border-stone-900 outline-none transition rounded-none font-medium text-stone-900"
                   value={serviceForm.duration} onChange={e => setServiceForm({...serviceForm, duration: e.target.value})} />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">
-                  Foto Real {editingServiceId && <span className="text-rose-500 font-normal text-xs">(Opcional)</span>}
+                <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest mb-1">
+                  Foto Real {editingServiceId && <span className="text-stone-400 font-normal text-[10px]">(Opcional)</span>}
                 </label>
                 <input type="file" accept="image/*" onChange={handleFileChange}
-                  className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-rose-50 file:text-rose-700 hover:file:bg-rose-100 cursor-pointer outline-none" />
+                  className="w-full p-2 text-stone-500 file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:uppercase file:tracking-widest file:font-semibold file:bg-stone-100 file:text-stone-800 hover:file:bg-stone-200 cursor-pointer outline-none" />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1">Descripción</label>
-              <textarea required className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 outline-none transition" rows="3"
+              <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest mb-1">Descripción</label>
+              <textarea required className="w-full p-2 bg-transparent border-b border-stone-200 focus:border-stone-900 outline-none transition rounded-none font-medium text-stone-900" rows="2"
                 value={serviceForm.description} onChange={e => setServiceForm({...serviceForm, description: e.target.value})}></textarea>
             </div>
 
             <button type="submit" disabled={isUploading}
-              className={`w-full py-4 font-bold text-white rounded-xl transition shadow-lg mt-6 flex items-center justify-center gap-2 ${isUploading ? 'bg-slate-400 cursor-wait' : 'bg-slate-900 hover:bg-rose-600 shadow-rose-200'}`}>
+              className={`w-full py-4 font-bold text-white rounded-full uppercase tracking-widest text-[10px] transition-all shadow-xl mt-8 flex items-center justify-center gap-2 ${isUploading ? 'bg-stone-400 cursor-wait' : 'bg-stone-900 hover:bg-rose-300 hover:text-stone-900 shadow-stone-200'}`}>
               {isUploading ? <><MdCloudUpload size={22} className="animate-pulse" /> Guardando en la nube...</> : (editingServiceId ? 'Guardar Cambios' : 'Crear y Publicar Servicio')}
             </button>
           </form>
@@ -184,26 +184,26 @@ export default function ServicesPanel({ token }) {
       {/* Grid de servicios existentes (Modo Admin) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {servicios.map(s => (
-          <div key={s.id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 flex flex-col">
-            <div className="h-40 relative">
+          <div key={s.id} className="bg-white rounded-3xl overflow-hidden shadow-sm border border-stone-100 flex flex-col hover:shadow-xl transition-all duration-300">
+            <div className="h-48 relative">
               <img src={s.imageUrl || 'https://via.placeholder.com/400'} alt={s.name} className="w-full h-full object-cover" />
-              <div className="absolute top-2 right-2 flex gap-2">
-                <button onClick={() => iniciarEdicion(s)} className="bg-amber-100 text-amber-700 hover:bg-amber-200 font-bold px-3 py-1 text-xs rounded-full shadow-sm backdrop-blur transition flex items-center gap-1">
+              <div className="absolute top-3 right-3 flex gap-2">
+                <button onClick={() => iniciarEdicion(s)} className="bg-white/90 text-stone-800 hover:bg-stone-900 hover:text-white font-bold px-4 py-1.5 text-[10px] uppercase tracking-widest rounded-full shadow-sm backdrop-blur transition-all flex items-center gap-1">
                   <MdEdit size={14} /> Editar
                 </button>
-                <button onClick={() => eliminarServicio(s.id)} className="bg-rose-100/90 text-rose-700 hover:bg-rose-500 hover:text-white font-bold px-3 py-1 text-xs rounded-full shadow-sm backdrop-blur transition flex items-center gap-1">
+                <button onClick={() => eliminarServicio(s.id)} className="bg-white/90 text-rose-500 hover:bg-rose-500 hover:text-white font-bold px-4 py-1.5 text-[10px] uppercase tracking-widest rounded-full shadow-sm backdrop-blur transition-all flex items-center gap-1">
                   <MdDelete size={14} /> Borrar
                 </button>
               </div>
             </div>
-            <div className="p-5 flex-1 flex flex-col justify-between">
+            <div className="p-6 flex-1 flex flex-col justify-between">
               <div>
-                <h3 className="font-bold text-slate-800 text-lg leading-tight">{s.name}</h3>
-                <p className="text-slate-500 text-sm mt-1 mb-4 line-clamp-2">{s.description}</p>
+                <h3 className="font-extrabold text-stone-900 text-xl leading-tight">{s.name}</h3>
+                <p className="text-stone-500 text-sm mt-2 mb-6 line-clamp-2">{s.description}</p>
               </div>
-              <div className="flex justify-between items-center bg-slate-50 p-3 rounded-lg border border-slate-100">
-                <span className="font-black text-slate-900">${s.price}</span>
-                <span className="text-xs font-bold text-slate-500 flex items-center gap-1"><MdAccessTime size={14} /> {s.duration} min</span>
+              <div className="flex justify-between items-center bg-stone-50 p-4 rounded-2xl border border-stone-100">
+                <span className="font-black text-stone-900 text-xl">${s.price}</span>
+                <span className="text-xs font-bold text-stone-500 flex items-center gap-1"><MdAccessTime size={14} /> {s.duration} min</span>
               </div>
             </div>
           </div>

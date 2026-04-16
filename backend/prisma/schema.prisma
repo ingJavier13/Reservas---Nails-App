@@ -47,10 +47,11 @@ model Service {
 }
 
 model Appointment {
-  id        Int      @id @default(autoincrement())
-  date      DateTime
-  status    Status   @default(PENDIENTE)
-  createdAt DateTime @default(now())
+  id                 Int      @id @default(autoincrement())
+  date               DateTime
+  status             Status   @default(PENDIENTE)
+  cancellationReason String?  // <- Motivo capturado en el nuevo popup
+  createdAt          DateTime @default(now())
 
   // Relación 1: El Cliente que agendó
   userId    Int

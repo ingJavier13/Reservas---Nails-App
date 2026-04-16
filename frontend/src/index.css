@@ -2,6 +2,6 @@
 
 /* Tus estilos personalizados abajo si los necesitas */
 body {
-  @apply bg-slate-50 text-slate-900 antialiased;
+  @apply bg-stone-50 text-stone-900 antialiased selection:bg-rose-200 selection:text-stone-900;
   font-family: 'Inter', sans-serif;
 }

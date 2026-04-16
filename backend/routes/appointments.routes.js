@@ -60,13 +60,32 @@ router.post('/', verifyToken, async (req, res) => {
   }
 });
 
-// DELETE: Cancelar una cita (Protegido)
-router.delete('/:id', verifyToken, async (req, res) => {
+// PATCH: Cancelar una cita (Protegido - Actualiza estado en vez de borrar)
+router.patch('/:id/cancel', verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
-    await prisma.appointment.delete({ where: { id: parseInt(id) } });
-    res.json({ message: "Cita cancelada correctamente" });
+    const { reason } = req.body;
+
+    // Verificar permisos:
+    const cita = await prisma.appointment.findUnique({ where: { id: parseInt(id) } });
+    if (!cita) return res.status(404).json({ error: "Cita no encontrada" });
+
+    // Solo ADMIN o el que creyó la cita puede cancelarla
+    if (req.user.role !== 'ADMIN' && cita.userId !== req.user.id) {
+       return res.status(403).json({ error: "No puedes cancelar esta cita" });
+    }
+
+    const updated = await prisma.appointment.update({ 
+      where: { id: parseInt(id) },
+      data: {
+        status: 'CANCELADA',
+        cancellationReason: reason || "Cancelada por el usuario"
+      }
+    });
+
+    res.json({ message: "Cita cancelada correctamente", appointment: updated });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Error al cancelar la cita" });
   }
 });
