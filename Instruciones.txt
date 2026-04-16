@@ -1,0 +1,38 @@
+#PARA LEVANTAR FRONT END
+npm run dev dentro de la carpeta
+
+#PARA LEVANTAR BACK END
+npm run dev dentro de la carpeta
+
+#para migracion de base de datos
+npx prisma migrate dev --name init dentro de backend
+
+#para crear seeders
+npx prisma db seed dentro de backend
+
+#para generar cliente prisma
+npx prisma generate dentro de backend
+
+#para actualizar base de datos
+npx prisma migrate dev --name init dentro de backend
+
+
+Datos de prueba
+email: prueba@gmail.com
+password: 1234
+name: Javier Test
+role: CLIENTE
+
+Cada vez que se actualice el schema se de be ejecutar:
+npx prisma db push
+npx prisma generate
+
+Para ejecutar seeders:
+node seed.js
+
+Cuenta de Admin para pruebas:
+email: [admin@nailslab.com]
+password: 123456
+
+Para Correr Prisma Studio:
+npx prisma studio dentro de backend

@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- ENUMS ---
+enum Role {
+  CLIENTE
+  TRABAJADOR
+  ADMIN
+}
+
+enum Status {
+  PENDIENTE
+  CONFIRMADA
+  CANCELADA
+  COMPLETADA
+}
+
+// --- MODELOS ---
+model User {
+  id            Int           @id @default(autoincrement())
+  email         String        @unique
+  password      String
+  name          String
+  role          Role          @default(CLIENTE)
+  createdAt     DateTime      @default(now())
+  
+  // Relaciones (Un usuario puede ser cliente o trabajador en una cita)
+  appointments  Appointment[] @relation("CustomerAppointments")
+  workSchedules Appointment[] @relation("WorkerAppointments")
+}
+
+model Service {
+  id           Int           @id @default(autoincrement())
+  name         String
+  description  String?
+  price        Float
+  duration     Int           // Duración en minutos
+  imageUrl     String?       // IMAGEN DEL SERVICIO
+  
+  appointments Appointment[]
+}
+
+model Appointment {
+  id        Int      @id @default(autoincrement())
+  date      DateTime
+  status    Status   @default(PENDIENTE)
+  createdAt DateTime @default(now())
+
+  // Relación 1: El Cliente que agendó
+  userId    Int
+  user      User     @relation("CustomerAppointments", fields: [userId], references: [id])
+
+  // Relación 2: La Manicurista asignada (Opcional al principio)
+  workerId  Int?     
+  worker    User?    @relation("WorkerAppointments", fields: [workerId], references: [id])
+
+  // Relación 3: El Servicio
+  serviceId Int
+  service   Service  @relation(fields: [serviceId], references: [id])
+}
