@@ -99,7 +99,14 @@ export default function AdminPanel({ user, token }) {
                       </span>
                     </td>
                     {user?.role === 'ADMIN' && (
-                      <td className="p-4 font-medium text-stone-700">{cita.user?.name || 'Cliente'}</td>
+                      <td className="p-4">
+                        <span className="block font-medium text-stone-700">{cita.user?.name || 'Cliente'}</span>
+                        {cita.user?.phone && (
+                          <a href={`https://wa.me/52${cita.user.phone}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[10px] text-stone-400 hover:text-stone-900 font-bold tracking-widest uppercase mt-1 transition-colors">
+                            📞 {cita.user.phone}
+                          </a>
+                        )}
+                      </td>
                     )}
                     <td className="p-4">
                       <span className="font-bold text-rose-400">{cita.service?.name}</span>

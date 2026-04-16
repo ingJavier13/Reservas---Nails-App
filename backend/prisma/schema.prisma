@@ -27,6 +27,7 @@ model User {
   email         String        @unique
   password      String
   name          String
+  phone         String?       // Agregado para WhatsApp/Llamadas
   role          Role          @default(CLIENTE)
   createdAt     DateTime      @default(now())
   

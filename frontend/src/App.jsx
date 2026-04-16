@@ -3,12 +3,19 @@ import axios from 'axios';
 import AdminPanel from './components/AdminPanel';
 import ServicesPanel from './components/ServicesPanel';
 import Auth from './components/Auth'; // Importación correcta
-import { MdAccessTime, MdLogout } from 'react-icons/md';
+import { MdAccessTime, MdLogout, MdSettings } from 'react-icons/md';
 
 function App() {
   // --- Estados de la Navegación y Datos ---
   const [view, setView] = useState(() => localStorage.getItem('view') || 'servicios');
   const [servicios, setServicios] = useState([]);
+  
+  // --- Sistema de Notificaciones Elegantes (Toast) ---
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 4000);
+  };
 
   // --- Estados de Autenticación ---
   const [user, setUser] = useState(() => {
@@ -16,7 +23,8 @@ function App() {
     return savedUser ? JSON.parse(savedUser) : null;
   }); 
   const [token, setToken] = useState(() => localStorage.getItem('token') || null); 
-  const [showAuth, setShowAuth] = useState(false); 
+  const [showAuth, setShowAuth] = useState(false);
+  const [showSettings, setShowSettings] = useState(false); 
 
   // --- Persistencia automática en LocalStorage ---
   useEffect(() => {
@@ -114,13 +122,27 @@ function App() {
             {user ? (
               <div className="flex items-center gap-4 ml-4">
                 <span className="text-sm font-bold text-stone-800">Hola, {user.name}</span>
-                <button 
-                  title="Cerrar sesión"
-                  onClick={() => { setUser(null); setToken(null); setView('servicios'); }}
-                  className="flex items-center gap-1 text-[10px] uppercase tracking-widest font-bold text-stone-400 hover:text-rose-500 transition-colors"
-                >
-                  <MdLogout size={16} /> Cerrar Sesión
-                </button>
+                <div className="flex gap-2">
+                  <button 
+                    title="Ajustes de Perfil"
+                    onClick={() => setShowSettings(true)}
+                    className="flex items-center gap-1 text-[10px] uppercase tracking-widest font-bold text-stone-400 hover:text-stone-900 transition-colors"
+                  >
+                    <MdSettings size={16} /> 
+                  </button>
+                  <button 
+                    title="Cerrar sesión"
+                    onClick={() => { 
+                      setUser(null); 
+                      setToken(null); 
+                      setView('servicios'); 
+                      showToast('Sesión cerrada correctamente'); 
+                    }}
+                    className="flex items-center gap-1 text-[10px] uppercase tracking-widest font-bold text-stone-400 hover:text-rose-500 transition-colors"
+                  >
+                    <MdLogout size={16} /> Cerrar Sesión
+                  </button>
+                </div>
               </div>
             ) : (
               <button 
@@ -252,14 +274,66 @@ function App() {
       {/* --- 4. MODAL DE AUTENTICACIÓN (Mismo nivel que la raíz) --- */}
       {showAuth && (
         <Auth 
+          showToast={showToast}
           onCancel={() => setShowAuth(false)} 
           onLoginSuccess={(userData, userToken) => {
             setUser(userData);
             setToken(userToken);
             setShowAuth(false);
+            showToast(`¡Bienvenida nuevamente, ${userData.name}!`);
             if(userData.role === 'ADMIN') setView('admin');
           }} 
         />
+      )}
+
+      {/* --- 5. MODAL DE AJUSTES --- */}
+      {showSettings && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-md animate-fade-in">
+          <div className="bg-white rounded-[2rem] p-8 max-w-sm w-full shadow-2xl relative">
+            <button onClick={() => setShowSettings(false)} className="absolute top-4 right-4 text-stone-400 hover:text-stone-900 font-bold p-2">✕</button>
+            <h2 className="text-2xl font-black text-stone-900 mb-6">Mis Datos</h2>
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target);
+              try {
+                const res = await axios.put('http://localhost:3000/auth/me', {
+                   name: formData.get('name'), phone: formData.get('phone')
+                }, { headers: { Authorization: `Bearer ${token}` } });
+                setUser({...user, ...res.data});
+                setShowSettings(false);
+                showToast('Perfil actualizado con éxito.');
+              } catch (err) {
+                 showToast('Error al actualizar el perfil.', 'error');
+              }
+            }}>
+              <div className="mb-4">
+                <label className="block text-[10px] font-bold text-stone-500 uppercase tracking-widest mb-1">Nombre Completo</label>
+                <input required defaultValue={user?.name} name="name" className="w-full p-3 bg-stone-50/50 border border-stone-200 rounded-2xl focus:border-stone-900 outline-none transition font-medium text-stone-900" />
+              </div>
+              <div className="mb-6">
+                <label className="block text-[10px] font-bold text-stone-500 uppercase tracking-widest mb-1">Teléfono (WhatsApp)</label>
+                <input required defaultValue={user?.phone || ''} name="phone" type="tel" pattern="[0-9]{10}" placeholder="Ej. 4491234567" className="w-full p-3 bg-stone-50/50 border border-stone-200 rounded-2xl focus:border-stone-900 outline-none transition font-medium text-stone-900" />
+              </div>
+              <button type="submit" className="w-full py-4 font-bold bg-stone-900 text-white rounded-full hover:bg-rose-300 hover:text-stone-900 transition-colors shadow-lg shadow-stone-200 uppercase tracking-widest text-[10px]">Guardar Cambios</button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* --- 6. NOTIFICACIONES GLOBALES TOAST --- */}
+      {toast.show && (
+        <div className="fixed bottom-8 right-8 z-[100] animate-fade-in">
+          <div className={`px-6 py-4 rounded-2xl shadow-2xl border backdrop-blur-md flex items-center gap-3 ${
+            toast.type === 'success' 
+              ? 'bg-stone-900/95 border-stone-800 text-stone-50' 
+              : 'bg-rose-50/95 border-rose-200 text-rose-800'
+          }`}>
+             <div className={`w-2 h-2 rounded-full ${toast.type === 'success' ? 'bg-stone-300' : 'bg-rose-500'}`}></div>
+             <span className="font-bold uppercase tracking-widest text-[10px]">
+               {toast.message}
+             </span>
+          </div>
+        </div>
       )}
 
     </div>

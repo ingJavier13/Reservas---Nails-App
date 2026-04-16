@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
+const { verifyToken } = require('../middlewares/auth.middleware');
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -11,7 +12,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'super_secreto_nails_lab_2026';
 // 1. REGISTRO DE USUARIO
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, phone } = req.body;
 
     // Verificar si el correo ya existe
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -28,6 +29,7 @@ router.post('/register', async (req, res) => {
       data: {
         name,
         email,
+        phone,
         password: hashedPassword,
         role: role || 'CLIENTE' 
       }
@@ -59,18 +61,35 @@ router.post('/login', async (req, res) => {
 
     // Generar el Token (Gafete virtual) con su ROL
     const token = jwt.sign(
-      { id: user.id, role: user.role, name: user.name }, 
+      { id: user.id, role: user.role, name: user.name, phone: user.phone }, 
       JWT_SECRET, 
       { expiresIn: '24h' }
     );
 
     res.json({
       token,
-      user: { id: user.id, name: user.name, email: user.email, role: user.role }
+      user: { id: user.id, name: user.name, email: user.email, role: user.role, phone: user.phone }
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al iniciar sesión" });
+  }
+});
+
+// 3. ACTUALIZAR PERFIL DE USUARIO
+router.put('/me', verifyToken, async (req, res) => {
+  try {
+    const { name, phone } = req.body;
+    const updatedUser = await prisma.user.update({
+      where: { id: req.user.id },
+      data: { name, phone }
+    });
+    
+    // Regresamos la nueva info sin la contraseña
+    res.json({ id: updatedUser.id, name: updatedUser.name, email: updatedUser.email, role: updatedUser.role, phone: updatedUser.phone });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al actualizar perfil" });
   }
 });
 
