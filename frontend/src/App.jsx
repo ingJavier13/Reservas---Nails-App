@@ -5,13 +5,29 @@ import Auth from './components/Auth'; // Importación correcta
 
 function App() {
   // --- Estados de la Navegación y Datos ---
-  const [view, setView] = useState('servicios');
+  const [view, setView] = useState(() => localStorage.getItem('view') || 'servicios');
   const [servicios, setServicios] = useState([]);
 
   // --- Estados de Autenticación ---
-  const [user, setUser] = useState(null); 
-  const [token, setToken] = useState(null); 
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  }); 
+  const [token, setToken] = useState(() => localStorage.getItem('token') || null); 
   const [showAuth, setShowAuth] = useState(false); 
+
+  // --- Persistencia automática en LocalStorage ---
+  useEffect(() => {
+    if (user) localStorage.setItem('user', JSON.stringify(user));
+    else localStorage.removeItem('user');
+    
+    if (token) localStorage.setItem('token', token);
+    else localStorage.removeItem('token');
+  }, [user, token]);
+
+  useEffect(() => {
+    localStorage.setItem('view', view);
+  }, [view]);
 
   // --- Estados del Modal de Citas ---
   const [isModalOpen, setIsModalOpen] = useState(false);

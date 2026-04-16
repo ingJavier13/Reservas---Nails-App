@@ -71,4 +71,27 @@ router.delete('/:id', verifyToken, async (req, res) => {
   }
 });
 
+// PATCH: Actualizar el estado de la cita (Para Admin/Trabajador)
+router.patch('/:id/status', verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    
+    // Validar que el rol sea ADMIN o TRABAJADOR
+    if (req.user.role === 'CLIENTE') {
+      return res.status(403).json({ error: "No tienes permisos suficientes" });
+    }
+
+    const updated = await prisma.appointment.update({
+      where: { id: parseInt(id) },
+      data: { status }
+    });
+    
+    res.json(updated);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al actualizar el estado de la cita" });
+  }
+});
+
 module.exports = router;
