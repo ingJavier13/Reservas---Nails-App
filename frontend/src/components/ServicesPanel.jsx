@@ -10,21 +10,28 @@ export default function ServicesPanel({ token }) {
   
   const [serviceForm, setServiceForm] = useState({ name: '', description: '', price: '', duration: '' });
   const [imageFile, setImageFile] = useState(null);
+  
+  const [availableMaterials, setAvailableMaterials] = useState([]);
+  const [selectedMaterials, setSelectedMaterials] = useState([]); // { materialId, quantity, name, unit }
 
   const config = { headers: { Authorization: `Bearer ${token}` } };
 
   // Cargar servicios al iniciar
-  const cargarServicios = async () => {
+  const cargarDatos = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/services');
-      setServicios(res.data);
+      const [resServ, resInv] = await Promise.all([
+        axios.get('http://localhost:3000/services'),
+        axios.get('http://localhost:3000/inventory', config)
+      ]);
+      setServicios(resServ.data);
+      setAvailableMaterials(resInv.data);
     } catch (error) {
-      console.error("Error al cargar servicios", error);
+      console.error("Error al cargar datos", error);
     }
   };
 
   useEffect(() => {
-    cargarServicios();
+    cargarDatos();
   }, []);
 
   const handleFileChange = (e) => {
@@ -52,7 +59,8 @@ export default function ServicesPanel({ token }) {
 
       const payload = {
         ...serviceForm,
-        ...(cloudinaryUrl && { imageUrl: cloudinaryUrl })
+        ...(cloudinaryUrl && { imageUrl: cloudinaryUrl }),
+        materials: selectedMaterials.map(m => ({ materialId: m.materialId, quantity: m.quantity }))
       };
 
       // Si hay un ID en edición, hacemos PUT. Sino, POST.
@@ -65,7 +73,7 @@ export default function ServicesPanel({ token }) {
       }
 
       cancelarEdicion();
-      cargarServicios(); // Refrescar lista visualmente
+      cargarDatos(); // Refrescar lista visualmente
       
     } catch (error) {
       console.error(error);
@@ -83,6 +91,19 @@ export default function ServicesPanel({ token }) {
       price: servicio.price, 
       duration: servicio.duration 
     });
+    
+    // Cargar materiales que la API ya devuelve populados con includes
+    if (servicio.materials) {
+      setSelectedMaterials(servicio.materials.map(sm => ({
+        materialId: sm.materialId,
+        name: sm.material?.name || 'Desconocido',
+        unit: sm.material?.unit || 'PIEZA',
+        quantity: sm.quantity
+      })));
+    } else {
+      setSelectedMaterials([]);
+    }
+
     setIsAddingService(true);
   };
 
@@ -91,6 +112,7 @@ export default function ServicesPanel({ token }) {
     setEditingServiceId(null);
     setImageFile(null);
     setServiceForm({ name: '', description: '', price: '', duration: '' });
+    setSelectedMaterials([]);
   };
 
   const eliminarServicio = async (id) => {
@@ -98,7 +120,7 @@ export default function ServicesPanel({ token }) {
     try {
       await axios.delete(`http://localhost:3000/services/${id}`, config);
       alert("Servicio borrado correctamente.");
-      cargarServicios();
+      cargarDatos();
     } catch (error) {
       console.error(error);
       alert("No se pudo eliminar.");
@@ -170,6 +192,50 @@ export default function ServicesPanel({ token }) {
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Descripción</label>
               <textarea required className="w-full p-2 bg-transparent border-b border-slate-200 focus:border-slate-900 outline-none transition rounded-none font-medium text-slate-900" rows="2"
                 value={serviceForm.description} onChange={e => setServiceForm({...serviceForm, description: e.target.value})}></textarea>
+            </div>
+
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Materiales a descontar (Receta / Stock)</label>
+              <div className="flex gap-2 mb-4">
+                <select id="matSelect" className="flex-1 p-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 outline-none">
+                  <option value="">-- Seleccionar Material a Vincular --</option>
+                  {availableMaterials.map(m => (
+                    <option key={m.id} value={m.id}>{m.name} ({m.unit})</option>
+                  ))}
+                </select>
+                <button type="button" onClick={() => {
+                  const select = document.getElementById('matSelect');
+                  const val = select.value;
+                  if (!val) return;
+                  const found = availableMaterials.find(x => x.id === parseInt(val));
+                  if (!selectedMaterials.find(x => x.materialId === found.id)) {
+                    setSelectedMaterials([...selectedMaterials, { materialId: found.id, name: found.name, unit: found.unit, quantity: 1 }]);
+                  }
+                  select.value = '';
+                }} className="bg-slate-200 text-slate-800 hover:bg-slate-300 font-bold px-4 rounded-lg text-xs uppercase transition">Añadir</button>
+              </div>
+
+              {selectedMaterials.length > 0 && (
+                <div className="space-y-2">
+                  {selectedMaterials.map((sm, index) => (
+                    <div key={index} className="flex items-center gap-3 bg-white p-2 border border-slate-200 rounded-lg text-sm">
+                      <span className="flex-1 font-bold text-slate-700">{sm.name}</span>
+                      <input type="number" step="0.01" min="0.01" value={sm.quantity} 
+                        onChange={e => {
+                          const newArr = [...selectedMaterials];
+                          newArr[index].quantity = e.target.value;
+                          setSelectedMaterials(newArr);
+                        }} 
+                        className="w-20 p-1 border border-slate-200 rounded outline-none text-center" 
+                      />
+                      <span className="text-xs text-slate-400 w-12">{sm.unit}</span>
+                      <button type="button" onClick={() => {
+                        setSelectedMaterials(selectedMaterials.filter((_, i) => i !== index));
+                      }} className="text-rose-500 hover:text-rose-700 p-1"><MdDelete size={16}/></button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <button type="submit" disabled={isUploading}

@@ -22,4 +22,12 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-module.exports = { verifyToken };
+const isAdmin = (req, res, next) => {
+  if (req.user && req.user.role === 'ADMIN') {
+    next();
+  } else {
+    return res.status(403).json({ error: "Acceso denegado. Se requiere nivel de administrador." });
+  }
+};
+
+module.exports = { verifyToken, isAdmin };

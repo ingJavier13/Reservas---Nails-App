@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import AdminPanel from './components/AdminPanel';
 import ServicesPanel from './components/ServicesPanel';
+import InventoryPanel from './components/InventoryPanel';
+import FinancePanel from './components/FinancePanel';
 import Auth from './components/Auth'; // Importación correcta
 import { MdAccessTime, MdLogout, MdSettings } from 'react-icons/md';
 
@@ -110,12 +112,26 @@ function App() {
               Mis Citas
             </button>
             {user?.role === 'ADMIN' && (
-              <button 
-                onClick={() => setView('mis-servicios')} 
-                className={`transition uppercase tracking-widest text-[11px] ${view === 'mis-servicios' ? 'text-slate-900 font-bold border-b border-slate-900 pb-1' : 'text-slate-500 hover:text-slate-900'}`}
-              >
-                Mis Servicios
-              </button>
+              <>
+                <button 
+                  onClick={() => setView('mis-servicios')} 
+                  className={`transition uppercase tracking-widest text-[11px] ${view === 'mis-servicios' ? 'text-slate-900 font-bold border-b border-slate-900 pb-1' : 'text-slate-500 hover:text-slate-900'}`}
+                >
+                  Catálogo
+                </button>
+                <button 
+                  onClick={() => setView('inventory')} 
+                  className={`transition uppercase tracking-widest text-[11px] ${view === 'inventory' ? 'text-slate-900 font-bold border-b border-slate-900 pb-1' : 'text-slate-500 hover:text-slate-900'}`}
+                >
+                  Inventario
+                </button>
+                <button 
+                  onClick={() => setView('finance')} 
+                  className={`transition uppercase tracking-widest text-[11px] ${view === 'finance' ? 'text-slate-900 font-bold border-b border-slate-900 pb-1' : 'text-slate-500 hover:text-slate-900'}`}
+                >
+                  Finanzas
+                </button>
+              </>
             )}
             
             {/* Botón de Login/Logout Inteligente */}
@@ -234,6 +250,10 @@ function App() {
         <AdminPanel user={user} token={token} />
       ) : view === 'mis-servicios' ? (
         <ServicesPanel token={token} />
+      ) : view === 'inventory' ? (
+        <InventoryPanel token={token} />
+      ) : view === 'finance' ? (
+        <FinancePanel token={token} />
       ) : null}
 
       {/* --- 3. Modal de Reserva --- */}

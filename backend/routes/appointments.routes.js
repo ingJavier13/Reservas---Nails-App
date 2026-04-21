@@ -106,6 +106,22 @@ router.patch('/:id/status', verifyToken, async (req, res) => {
       data: { status }
     });
     
+    // Si la cita se marcó como COMPLETADA, descontamos inventario
+    if (status === 'COMPLETADA') {
+      const citaInfo = await prisma.appointment.findUnique({
+        where: { id: parseInt(id) },
+        include: { service: { include: { materials: true } } }
+      });
+      if (citaInfo?.service?.materials?.length > 0) {
+        for (const sm of citaInfo.service.materials) {
+          await prisma.material.update({
+            where: { id: sm.materialId },
+            data: { currentStock: { decrement: sm.quantity } }
+          });
+        }
+      }
+    }
+
     res.json(updated);
   } catch (error) {
     console.error(error);

@@ -21,6 +21,12 @@ enum Status {
   COMPLETADA
 }
 
+enum UnitType {
+  PIEZA
+  MILILITROS
+  GRAMOS
+}
+
 // --- MODELOS ---
 model User {
   id            Int           @id @default(autoincrement())
@@ -45,6 +51,7 @@ model Service {
   imageUrl     String?       // IMAGEN DEL SERVICIO
   
   appointments Appointment[]
+  materials    ServiceMaterial[]
 }
 
 model Appointment {
@@ -65,4 +72,35 @@ model Appointment {
   // Relación 3: El Servicio
   serviceId Int
   service   Service  @relation(fields: [serviceId], references: [id])
+}
+
+model Material {
+  id          Int      @id @default(autoincrement())
+  name        String
+  currentStock Float   @default(0)
+  minStock    Float    @default(0)
+  unit        UnitType @default(PIEZA)
+  costPerUnit Float?    // Para estadísticas/finanzas
+  
+  services    ServiceMaterial[]
+  createdAt   DateTime @default(now())
+}
+
+model ServiceMaterial {
+  id         Int      @id @default(autoincrement())
+  serviceId  Int
+  materialId Int
+  quantity   Float    // Cantidad descontada en cada servicio
+  
+  service    Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  material   Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
+
+  @@unique([serviceId, materialId])
+}
+
+model Expense {
+  id          Int      @id @default(autoincrement())
+  description String
+  amount      Float
+  date        DateTime @default(now())
 }
