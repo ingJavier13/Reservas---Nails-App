@@ -4,6 +4,7 @@ import AdminPanel from './components/AdminPanel';
 import ServicesPanel from './components/ServicesPanel';
 import InventoryPanel from './components/InventoryPanel';
 import FinancePanel from './components/FinancePanel';
+import TeamPanel from './components/TeamPanel';
 import Auth from './components/Auth'; // Importación correcta
 import { MdAccessTime, MdLogout, MdSettings } from 'react-icons/md';
 
@@ -131,6 +132,12 @@ function App() {
                 >
                   Finanzas
                 </button>
+                <button 
+                  onClick={() => setView('team')} 
+                  className={`transition uppercase tracking-widest text-[11px] ${view === 'team' ? 'text-slate-900 font-bold border-b border-slate-900 pb-1' : 'text-slate-500 hover:text-slate-900'}`}
+                >
+                  Mi Equipo
+                </button>
               </>
             )}
             
@@ -254,6 +261,8 @@ function App() {
         <InventoryPanel token={token} />
       ) : view === 'finance' ? (
         <FinancePanel token={token} />
+      ) : view === 'team' ? (
+        <TeamPanel token={token} />
       ) : null}
 
       {/* --- 3. Modal de Reserva --- */}

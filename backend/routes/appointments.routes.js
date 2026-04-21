@@ -129,4 +129,31 @@ router.patch('/:id/status', verifyToken, async (req, res) => {
   }
 });
 
+// PATCH: Asignar cita a un manicurista
+router.patch('/:id/assign', verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { workerId } = req.body;
+    
+    // Solo permitimos a los administradores asignar citas
+    if (req.user.role !== 'ADMIN') {
+      return res.status(403).json({ error: "Solo los administradores pueden asignar personal a las citas" });
+    }
+
+    const unassignedApt = await prisma.appointment.findUnique({ where: { id: parseInt(id) } });
+    if (!unassignedApt) return res.status(404).json({ error: "Cita no encontrada" });
+
+    // Actualizamos
+    const updated = await prisma.appointment.update({
+      where: { id: parseInt(id) },
+      data: { workerId: workerId ? parseInt(workerId) : null }
+    });
+
+    res.json(updated);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al asignar manicurista" });
+  }
+});
+
 module.exports = router;

@@ -7,6 +7,7 @@ const appointmentRoutes = require('./routes/appointments.routes');
 const authRoutes = require('./routes/auth.routes');
 const inventoryRoutes = require('./routes/inventory.routes');
 const financeRoutes = require('./routes/finance.routes');
+const usersRoutes = require('./routes/users.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,6 +21,7 @@ app.use('/appointments', appointmentRoutes);
 app.use('/auth', authRoutes);
 app.use('/inventory', inventoryRoutes);
 app.use('/finance', financeRoutes);
+app.use('/users', usersRoutes);
 
 // Aquí puedes dejar rutas muy simples o moverlas después
 app.get('/health', (req, res) => {

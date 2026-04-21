@@ -11,19 +11,26 @@ export default function AdminPanel({ user, token }) {
   const [filterDate, setFilterDate] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   
+  const [workers, setWorkers] = useState([]);
+
   const config = { headers: { Authorization: `Bearer ${token}` } };
 
-  const cargarCitas = async () => {
+  const cargarDatos = async () => {
     try {
       const res = await axios.get('http://localhost:3000/appointments', config);
       setAppointments(res.data);
+      
+      if (user?.role === 'ADMIN') {
+        const workersRes = await axios.get('http://localhost:3000/users/workers', config);
+        setWorkers(workersRes.data);
+      }
     } catch (error) {
-      console.error("Error al cargar citas", error);
+      console.error("Error al cargar datos", error);
     }
   };
 
   useEffect(() => {
-    if (token) cargarCitas();
+    if (token) cargarDatos();
   }, [token]);
 
   const iniciarCancelacion = (id) => {
@@ -60,6 +67,30 @@ export default function AdminPanel({ user, token }) {
     } catch (error) {
       console.error("Error al aceptar la cita", error);
       alert("Hubo un error al intentar aceptar la cita.");
+    }
+  };
+
+  const completarCita = async (id) => {
+    if(!window.confirm("¿Estás seguro de marcar esta cita como completada? Esto descontará los materiales del inventario de forma definitiva.")) return;
+    try {
+      await axios.patch(`http://localhost:3000/appointments/${id}/status`, { status: 'COMPLETADA' }, config);
+      setAppointments(appointments.map(cita => 
+        cita.id === id ? { ...cita, status: 'COMPLETADA' } : cita
+      ));
+      alert("Cita marcada como COMPLETADA. Inventario actualizado.");
+    } catch (error) {
+      console.error("Error", error);
+    }
+  };
+
+  const asignarTrabajador = async (citaId, workerId) => {
+    try {
+      await axios.patch(`http://localhost:3000/appointments/${citaId}/assign`, { workerId }, config);
+      setAppointments(appointments.map(cita => 
+        cita.id === citaId ? { ...cita, workerId: workerId ? parseInt(workerId) : null, worker: workers.find(w => w.id === parseInt(workerId)) } : cita
+      ));
+    } catch (error) {
+      alert("Error al asignar personal.");
     }
   };
 
@@ -193,6 +224,7 @@ export default function AdminPanel({ user, token }) {
                   <th className="p-4 font-bold">Servicio</th>
                   <th className="p-4 font-bold">Precio</th>
                   <th className="p-4 font-bold">Estado</th>
+                  {user?.role === 'ADMIN' && <th className="p-4 font-bold">Asignación</th>}
                   <th className="p-4 font-bold text-center">Acciones</th>
                 </tr>
               </thead>
@@ -224,13 +256,26 @@ export default function AdminPanel({ user, token }) {
                       ${cita.service?.price}
                     </td>
                     <td className="p-4 relative">
-                      <span className={`px-3 py-1 inline-block rounded-full text-[10px] uppercase font-bold tracking-widest shadow-sm ${cita.status === 'CONFIRMADA' ? 'bg-slate-800 text-slate-100' : cita.status === 'CANCELADA' ? 'bg-rose-100 text-rose-700' : 'border border-slate-200 text-slate-600'}`}>
+                      <span className={`px-3 py-1 inline-block rounded-full text-[10px] uppercase font-bold tracking-widest shadow-sm ${cita.status === 'CONFIRMADA' ? 'bg-slate-800 text-slate-100' : cita.status === 'CANCELADA' ? 'bg-rose-100 text-rose-700' : cita.status === 'COMPLETADA' ? 'bg-teal-800 text-teal-100' : 'border border-slate-200 text-slate-600'}`}>
                         {cita.status || 'PENDIENTE'}
                       </span>
                       {cita.status === 'CANCELADA' && cita.cancellationReason && (
                         <p className="text-[10px] text-slate-400 mt-2 italic max-w-[200px]">" {cita.cancellationReason} "</p>
                       )}
                     </td>
+                    {user?.role === 'ADMIN' && (
+                      <td className="p-4">
+                        <select 
+                          className="bg-slate-50 border border-slate-200 text-[10px] font-bold uppercase py-1 px-2 rounded-lg outline-none cursor-pointer"
+                          value={cita.workerId || ''}
+                          onChange={(e) => asignarTrabajador(cita.id, e.target.value)}
+                          disabled={cita.status === 'CANCELADA'}
+                        >
+                          <option value="">-- Sin Asignar --</option>
+                          {workers.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
+                        </select>
+                      </td>
+                    )}
                     <td className="p-4 text-center">
                       <div className="flex justify-center flex-wrap gap-2">
                         {user?.role === 'ADMIN' && (!cita.status || cita.status === 'PENDIENTE') && (
@@ -241,7 +286,15 @@ export default function AdminPanel({ user, token }) {
                             Aceptar
                           </button>
                         )}
-                        {cita.status !== 'CANCELADA' && (
+                        {(user?.role === 'ADMIN' || user?.role === 'TRABAJADOR') && cita.status === 'CONFIRMADA' && (
+                          <button 
+                            onClick={() => completarCita(cita.id)}
+                            className="text-teal-800 border border-teal-800 hover:bg-teal-800 hover:text-white font-bold px-4 py-1.5 rounded-full text-[10px] uppercase tracking-widest transition-all duration-300"
+                          >
+                            ✓ Completar
+                          </button>
+                        )}
+                        {cita.status !== 'CANCELADA' && cita.status !== 'COMPLETADA' && (
                           <button 
                             onClick={() => iniciarCancelacion(cita.id)}
                             className="text-slate-500 border border-transparent hover:border-rose-400 hover:text-rose-600 font-bold px-4 py-1.5 rounded-full text-[10px] uppercase tracking-widest transition-all duration-300"
