@@ -130,8 +130,8 @@ export default function AdminPanel({ user, token }) {
         </div>
       </div>
 
-      {/* KPIs para ADMIN */}
-      {user?.role === 'ADMIN' && (
+      {/* KPIs para ADMIN y TRABAJADOR */}
+      {(user?.role === 'ADMIN' || user?.role === 'TRABAJADOR') && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl relative overflow-hidden group hover:scale-[1.02] transition-transform">
              <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/5 rounded-full blur-2xl group-hover:bg-amber-400/20 transition-colors"></div>
@@ -154,23 +154,28 @@ export default function AdminPanel({ user, token }) {
              )}
           </div>
           
-          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow">
-             <h3 className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-2">Ingresos Seguros Hoy</h3>
-             <div className="flex items-end gap-3">
-               <span className="text-4xl font-black text-slate-800">${ingresosHoy}</span>
-               <span className="text-xs text-slate-400 mb-1 pb-1">MXN</span>
-             </div>
-             <p className="text-[10px] uppercase tracking-widest text-slate-400 mt-4 pt-4 border-t border-slate-50">(Solo confirmadas o completadas)</p>
-          </div>
+          
+          {user?.role === 'ADMIN' && (
+            <>
+              <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                 <h3 className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-2">Ingresos Seguros Hoy</h3>
+                 <div className="flex items-end gap-3">
+                   <span className="text-4xl font-black text-slate-800">${ingresosHoy}</span>
+                   <span className="text-xs text-slate-400 mb-1 pb-1">MXN</span>
+                 </div>
+                 <p className="text-[10px] uppercase tracking-widest text-slate-400 mt-4 pt-4 border-t border-slate-50">(Solo confirmadas o completadas)</p>
+              </div>
 
-          <div className="bg-rose-50 border border-rose-100 rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow">
-             <h3 className="text-[10px] uppercase tracking-widest text-rose-400 font-bold mb-2">Acción Requerida Hoy</h3>
-             <div className="flex items-end gap-3">
-               <span className={`text-4xl font-black ${pendientesHoy > 0 ? 'text-rose-600' : 'text-slate-300'}`}>{pendientesHoy}</span>
-               <span className="text-xs text-rose-400 mb-1 pb-1">citas</span>
-             </div>
-             <p className="text-[10px] uppercase tracking-widest text-rose-600 mt-4 pt-4 border-t border-rose-200/50">Pendientes por confirmar</p>
-          </div>
+              <div className="bg-rose-50 border border-rose-100 rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                 <h3 className="text-[10px] uppercase tracking-widest text-rose-400 font-bold mb-2">Acción Requerida Hoy</h3>
+                 <div className="flex items-end gap-3">
+                   <span className={`text-4xl font-black ${pendientesHoy > 0 ? 'text-rose-600' : 'text-slate-300'}`}>{pendientesHoy}</span>
+                   <span className="text-xs text-rose-400 mb-1 pb-1">citas</span>
+                 </div>
+                 <p className="text-[10px] uppercase tracking-widest text-rose-600 mt-4 pt-4 border-t border-rose-200/50">Pendientes por confirmar</p>
+              </div>
+            </>
+          )}
         </div>
       )}
 

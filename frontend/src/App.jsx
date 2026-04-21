@@ -97,12 +97,14 @@ function App() {
             NAILS<span className="text-rose-400">.</span>LAB
           </span>
           <div className="space-x-6 text-sm font-medium text-slate-600 flex items-center">
-            <button 
-              onClick={() => setView('servicios')} 
-              className={`transition uppercase tracking-widest text-[11px] ${view === 'servicios' ? 'text-slate-900 font-bold border-b border-slate-900 pb-1' : 'text-slate-500 hover:text-slate-900'}`}
-            >
-              Servicios
-            </button>
+            {user?.role !== 'TRABAJADOR' && (
+              <button 
+                onClick={() => setView('servicios')} 
+                className={`transition uppercase tracking-widest text-[11px] ${view === 'servicios' ? 'text-slate-900 font-bold border-b border-slate-900 pb-1' : 'text-slate-500 hover:text-slate-900'}`}
+              >
+                Servicios
+              </button>
+            )}
             <button 
               onClick={() => {
                 if(!user) return setShowAuth(true); // Pide login si intenta ir al panel sin cuenta
@@ -311,7 +313,7 @@ function App() {
             setToken(userToken);
             setShowAuth(false);
             showToast(`¡Bienvenida nuevamente, ${userData.name}!`);
-            if(userData.role === 'ADMIN') setView('admin');
+            if(userData.role === 'ADMIN' || userData.role === 'TRABAJADOR') setView('admin');
           }} 
         />
       )}
