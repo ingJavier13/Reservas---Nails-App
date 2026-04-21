@@ -85,18 +85,18 @@ function App() {
 };
 
   return (
-    <div className="min-h-screen bg-stone-50 font-sans text-stone-900 relative">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 relative">
       
       {/* --- 1. Navbar --- */}
       <nav className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <span className="text-2xl font-black bg-gradient-to-r from-rose-500 to-pink-600 bg-clip-text text-transparent">
-            NAILS.LAB
+          <span className="text-2xl font-black bg-gradient-to-r from-slate-900 to-teal-800 bg-clip-text text-transparent">
+            NAILS<span className="text-rose-400">.</span>LAB
           </span>
           <div className="space-x-6 text-sm font-medium text-slate-600 flex items-center">
             <button 
               onClick={() => setView('servicios')} 
-              className={`transition uppercase tracking-widest text-[11px] ${view === 'servicios' ? 'text-stone-900 font-bold border-b border-stone-900 pb-1' : 'text-stone-500 hover:text-stone-900'}`}
+              className={`transition uppercase tracking-widest text-[11px] ${view === 'servicios' ? 'text-slate-900 font-bold border-b border-slate-900 pb-1' : 'text-slate-500 hover:text-slate-900'}`}
             >
               Servicios
             </button>
@@ -105,14 +105,14 @@ function App() {
                 if(!user) return setShowAuth(true); // Pide login si intenta ir al panel sin cuenta
                 setView('admin');
               }} 
-              className={`transition uppercase tracking-widest text-[11px] ${view === 'admin' ? 'text-stone-900 font-bold border-b border-stone-900 pb-1' : 'text-stone-500 hover:text-stone-900'}`}
+              className={`transition uppercase tracking-widest text-[11px] ${view === 'admin' ? 'text-slate-900 font-bold border-b border-slate-900 pb-1' : 'text-slate-500 hover:text-slate-900'}`}
             >
               Mis Citas
             </button>
             {user?.role === 'ADMIN' && (
               <button 
                 onClick={() => setView('mis-servicios')} 
-                className={`transition uppercase tracking-widest text-[11px] ${view === 'mis-servicios' ? 'text-stone-900 font-bold border-b border-stone-900 pb-1' : 'text-stone-500 hover:text-stone-900'}`}
+                className={`transition uppercase tracking-widest text-[11px] ${view === 'mis-servicios' ? 'text-slate-900 font-bold border-b border-slate-900 pb-1' : 'text-slate-500 hover:text-slate-900'}`}
               >
                 Mis Servicios
               </button>
@@ -121,12 +121,12 @@ function App() {
             {/* Botón de Login/Logout Inteligente */}
             {user ? (
               <div className="flex items-center gap-4 ml-4">
-                <span className="text-sm font-bold text-stone-800">Hola, {user.name}</span>
+                <span className="text-sm font-bold text-slate-800">Hola, {user.name}</span>
                 <div className="flex gap-2">
                   <button 
                     title="Ajustes de Perfil"
                     onClick={() => setShowSettings(true)}
-                    className="flex items-center gap-1 text-[10px] uppercase tracking-widest font-bold text-stone-400 hover:text-stone-900 transition-colors"
+                    className="flex items-center gap-1 text-[10px] uppercase tracking-widest font-bold text-slate-400 hover:text-slate-900 transition-colors"
                   >
                     <MdSettings size={16} /> 
                   </button>
@@ -138,7 +138,7 @@ function App() {
                       setView('servicios'); 
                       showToast('Sesión cerrada correctamente'); 
                     }}
-                    className="flex items-center gap-1 text-[10px] uppercase tracking-widest font-bold text-stone-400 hover:text-rose-500 transition-colors"
+                    className="flex items-center gap-1 text-[10px] uppercase tracking-widest font-bold text-slate-400 hover:text-rose-500 transition-colors"
                   >
                     <MdLogout size={16} /> Cerrar Sesión
                   </button>
@@ -147,7 +147,7 @@ function App() {
             ) : (
               <button 
                 onClick={() => setShowAuth(true)}
-                className="bg-stone-900 text-white uppercase tracking-widest text-[10px] font-bold px-6 py-2.5 rounded-full hover:bg-rose-300 hover:text-stone-900 transition-all duration-300 ml-4 shadow-md"
+                className="bg-slate-900 text-white uppercase tracking-widest text-[10px] font-bold px-6 py-2.5 rounded-full hover:bg-teal-800 transition-all duration-300 ml-4 shadow-md"
               >
                 Iniciar Sesión
               </button>
@@ -160,11 +160,12 @@ function App() {
       {view === 'servicios' ? (
         <>
           {/* Hero Section */}
-          <header className="py-16 px-4 text-center bg-gradient-to-b from-stone-200/50 to-transparent">
-            <h1 className="text-5xl font-extrabold text-stone-900 mb-4 tracking-tight">
-              Diseños que <span className="text-rose-400 font-serif italic font-light">enamoran</span>.
+          <header className="py-16 px-4 text-center bg-gradient-to-b from-slate-200/50 to-transparent relative">
+            <div className="absolute top-10 left-1/2 -translate-x-1/2 w-32 h-32 bg-amber-400/10 rounded-full blur-3xl"></div>
+            <h1 className="text-5xl font-extrabold text-slate-900 mb-4 tracking-tight relative z-10">
+              Diseños que <span className="text-teal-800 font-serif italic font-light">enamoran</span>.
             </h1>
-            <p className="text-lg text-stone-500 max-w-2xl mx-auto">
+            <p className="text-lg text-slate-500 max-w-2xl mx-auto relative z-10">
               Reserva tu cita con las mejores especialistas de Aguascalientes. Calidad, higiene y estilo en un solo lugar.
             </p>
           </header>
@@ -191,13 +192,13 @@ function App() {
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
                       
                       {/* Etiqueta de tiempo flotante */}
-                      <span className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-rose-600 shadow-sm z-10 flex items-center gap-1">
+                      <span className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-teal-800 shadow-sm z-10 flex items-center gap-1 border border-teal-100">
                         <MdAccessTime size={14} /> {s.duration} min
                       </span>
                     </div>
                   
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-slate-800 group-hover:text-rose-600 transition-colors">
+                    <h3 className="text-xl font-bold text-slate-800 group-hover:text-teal-800 transition-colors">
                       {s.name}
                     </h3>
                     <p className="text-slate-500 text-sm mt-2 line-clamp-2">
@@ -218,7 +219,7 @@ function App() {
                             setIsModalOpen(true);
                           }
                         }}
-                        className="border border-stone-800 text-stone-900 uppercase tracking-widest text-[10px] font-bold px-6 py-2.5 rounded-full hover:bg-stone-900 hover:text-white transition-all duration-300"
+                        className="bg-slate-900 text-white uppercase tracking-widest text-[10px] font-bold px-6 py-2.5 rounded-full hover:bg-amber-400 hover:text-slate-900 transition-all duration-300 shadow-md"
                       >
                         Agendar
                       </button>
@@ -240,14 +241,14 @@ function App() {
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
           <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl">
             <h2 className="text-2xl font-black text-slate-800 mb-2">Confirmar Cita</h2>
-            <p className="text-slate-500 mb-6">Vas a agendar: <span className="font-bold text-rose-500">{selectedService?.name}</span></p>
+            <p className="text-slate-500 mb-6">Vas a agendar: <span className="font-bold text-teal-800">{selectedService?.name}</span></p>
             
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-2">Selecciona Fecha y Hora</label>
                 <input 
                   type="datetime-local" 
-                  className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-rose-500 outline-none transition"
+                  className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:border-slate-900 outline-none transition uppercase text-xs"
                   onChange={(e) => setAppointmentDate(e.target.value)}
                 />
               </div>
@@ -255,13 +256,13 @@ function App() {
               <div className="flex gap-3 mt-8">
                 <button 
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 py-4 font-bold text-stone-500 border border-stone-200 hover:bg-stone-100 rounded-full transition uppercase tracking-widest text-xs"
+                  className="flex-1 py-4 font-bold text-slate-500 border border-slate-200 hover:bg-slate-50 rounded-full transition uppercase tracking-widest text-xs"
                 >
                   Cancelar
                 </button>
                 <button 
                   onClick={confirmarCita}
-                  className="flex-1 py-4 font-bold bg-stone-900 text-white rounded-full hover:bg-rose-300 hover:text-stone-900 transition-all duration-300 shadow-xl shadow-stone-200 uppercase tracking-widest text-xs"
+                  className="flex-1 py-4 font-bold bg-slate-900 text-white rounded-full hover:bg-teal-800 transition-all duration-300 shadow-xl shadow-slate-200 uppercase tracking-widest text-xs"
                 >
                   Confirmar
                 </button>
@@ -288,10 +289,10 @@ function App() {
 
       {/* --- 5. MODAL DE AJUSTES --- */}
       {showSettings && (
-        <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-md animate-fade-in">
+        <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-fade-in">
           <div className="bg-white rounded-[2rem] p-8 max-w-sm w-full shadow-2xl relative">
-            <button onClick={() => setShowSettings(false)} className="absolute top-4 right-4 text-stone-400 hover:text-stone-900 font-bold p-2">✕</button>
-            <h2 className="text-2xl font-black text-stone-900 mb-6">Mis Datos</h2>
+            <button onClick={() => setShowSettings(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-900 font-bold p-2">✕</button>
+            <h2 className="text-2xl font-black text-slate-900 mb-6">Mis Datos</h2>
             <form onSubmit={async (e) => {
               e.preventDefault();
               const formData = new FormData(e.target);
@@ -307,14 +308,14 @@ function App() {
               }
             }}>
               <div className="mb-4">
-                <label className="block text-[10px] font-bold text-stone-500 uppercase tracking-widest mb-1">Nombre Completo</label>
-                <input required defaultValue={user?.name} name="name" className="w-full p-3 bg-stone-50/50 border border-stone-200 rounded-2xl focus:border-stone-900 outline-none transition font-medium text-stone-900" />
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Nombre Completo</label>
+                <input required defaultValue={user?.name} name="name" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl focus:border-slate-900 outline-none transition font-medium text-slate-900" />
               </div>
               <div className="mb-6">
-                <label className="block text-[10px] font-bold text-stone-500 uppercase tracking-widest mb-1">Teléfono (WhatsApp)</label>
-                <input required defaultValue={user?.phone || ''} name="phone" type="tel" pattern="[0-9]{10}" placeholder="Ej. 4491234567" className="w-full p-3 bg-stone-50/50 border border-stone-200 rounded-2xl focus:border-stone-900 outline-none transition font-medium text-stone-900" />
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Teléfono (WhatsApp)</label>
+                <input required defaultValue={user?.phone || ''} name="phone" type="tel" pattern="[0-9]{10}" placeholder="Ej. 4491234567" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl focus:border-slate-900 outline-none transition font-medium text-slate-900" />
               </div>
-              <button type="submit" className="w-full py-4 font-bold bg-stone-900 text-white rounded-full hover:bg-rose-300 hover:text-stone-900 transition-colors shadow-lg shadow-stone-200 uppercase tracking-widest text-[10px]">Guardar Cambios</button>
+              <button type="submit" className="w-full py-4 font-bold bg-slate-900 text-white rounded-full hover:bg-amber-400 hover:text-slate-900 transition-colors shadow-lg shadow-slate-200 uppercase tracking-widest text-[10px]">Guardar Cambios</button>
             </form>
           </div>
         </div>
@@ -323,12 +324,12 @@ function App() {
       {/* --- 6. NOTIFICACIONES GLOBALES TOAST --- */}
       {toast.show && (
         <div className="fixed bottom-8 right-8 z-[100] animate-fade-in">
-          <div className={`px-6 py-4 rounded-2xl shadow-2xl border backdrop-blur-md flex items-center gap-3 ${
+          <div className={`px-6 py-4 rounded-full shadow-2xl border backdrop-blur-md flex items-center gap-3 ${
             toast.type === 'success' 
-              ? 'bg-stone-900/95 border-stone-800 text-stone-50' 
+              ? 'bg-slate-900/95 border-slate-800 text-slate-50' 
               : 'bg-rose-50/95 border-rose-200 text-rose-800'
           }`}>
-             <div className={`w-2 h-2 rounded-full ${toast.type === 'success' ? 'bg-stone-300' : 'bg-rose-500'}`}></div>
+             <div className={`w-2 h-2 rounded-full ${toast.type === 'success' ? 'bg-amber-400' : 'bg-rose-500'}`}></div>
              <span className="font-bold uppercase tracking-widest text-[10px]">
                {toast.message}
              </span>
